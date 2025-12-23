@@ -1,0 +1,6 @@
+edu\univ\haifa\bigdata\ScreenTimeAnalysis$UsageMapper.class
+edu\univ\haifa\bigdata\ScreenTimeAnalysis.class
+edu\univ\haifa\bigdata\ScreenTimeAnalysis$SortMapper.class
+edu\univ\haifa\bigdata\ScreenTimeAnalysis$Top5Reducer.class
+edu\univ\haifa\bigdata\ScreenTimeAnalysis$DescendingComparator.class
+edu\univ\haifa\bigdata\ScreenTimeAnalysis$SumReducer.class
