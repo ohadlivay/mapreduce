@@ -24,6 +24,7 @@ public class DailyAppLaunchDriver extends Configured implements Tool {
         int exitCode;
         Path inputPath;
         Path outputPath;
+        int numberOfReducers = 1;
 
         // Check arguments consistency
         if (args.length != 2) {
@@ -38,7 +39,7 @@ public class DailyAppLaunchDriver extends Configured implements Tool {
         // Define and configure a new job
         Configuration conf = this.getConf();
 
-        // Ensure output directory does not exist (retained from your original logic)
+        // Ensure output directory does not exist
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputPath)) {
             fs.delete(outputPath, true);
@@ -56,7 +57,7 @@ public class DailyAppLaunchDriver extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         // Set input format
-        // TextInputFormat = textual files (explicitly set as per lecture style)
+        // TextInputFormat = textual files
         job.setInputFormatClass(TextInputFormat.class);
 
         // Set job output format
@@ -69,7 +70,6 @@ public class DailyAppLaunchDriver extends Configured implements Tool {
         job.setMapperClass(DailyAppLaunchMapper.class);
 
         // Set map output key and value classes
-        // (Lecture explicitly sets these even if they match the reducer output)
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
 
@@ -81,8 +81,7 @@ public class DailyAppLaunchDriver extends Configured implements Tool {
         job.setOutputValueClass(Text.class);
 
         // Set number of reducers
-        // (The lecture typically parses this from args, but here we use default or 1 as per original)
-        // job.setNumReduceTasks(numberOfReducers);
+        job.setNumReduceTasks(numberOfReducers);
 
         // Execute the job and wait for completion
         if (job.waitForCompletion(true) == true)
