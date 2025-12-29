@@ -15,8 +15,8 @@ public class DailyAppLaunchMapper extends Mapper<
         Text>         // Output value type
 {
     /* Private variables */
-    private final Text compositeKey = new Text();
-    private final Text usageCount = new Text();
+    private final Text dateKey = new Text();
+    private final Text appAndCountValue = new Text();
 
     /* Implementation of the map method */
     protected void map(
@@ -33,29 +33,28 @@ public class DailyAppLaunchMapper extends Mapper<
         }
 
         // Expected Columns: Date(0), App(1), Usage(2), Notifications(3), Times Opened(4)
-        // Split the line by comma
         String[] parts = line.split(",");
 
-        // Check if the line has enough columns
         if (parts.length >= 5) {
             try {
                 String date = parts[0].trim();
                 String app = parts[1].trim();
                 String timesOpened = parts[4].trim();
 
-                // Set the output key: Date + Tab + App
-                // We combine them so Hadoop groups by this specific combination
-                compositeKey.set(date + "\t" + app);
+                // 1. Set the Output Key: Just the Date
+                // We group ONLY by date now, so the reducer sees all apps for that day together
+                dateKey.set(date);
 
-                // Set the output value: Just the count
-                usageCount.set(timesOpened);
+                // 2. Set the Output Value: App Name + Tab + Count
+                // We need to pass the App name to the reducer so we know who the winner is
+                appAndCountValue.set(app + "\t" + timesOpened);
 
-                // Emit the pair (date+app, count)
-                context.write(compositeKey, usageCount);
+                // Emit: Key(2023-01-01) -> Value(Facebook    150)
+                context.write(dateKey, appAndCountValue);
 
             } catch (Exception e) {
                 // Ignore malformed lines
             }
         }
-    } // End of the map method
-} // End of class DailyAppLaunchMapper
+    }
+}
