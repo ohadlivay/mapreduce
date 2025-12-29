@@ -22,6 +22,8 @@ public class NotificationsUsageReducer extends Reducer<
             Iterable<Text> values,  // Input values
             Context context) throws IOException, InterruptedException {
 
+        System.out.print("Reducing...");
+
         long totalUsage = 0;
         long totalNotifications = 0;
 

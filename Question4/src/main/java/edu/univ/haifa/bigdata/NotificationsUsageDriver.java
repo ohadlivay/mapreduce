@@ -93,8 +93,10 @@ public class NotificationsUsageDriver extends Configured implements Tool {
 
     /* main method of the driver class */
     public static void main(String args[]) throws Exception {
+        System.out.print("Driver starting");
         /* Exploit the ToolRunner class to "configure" and run the Hadoop application */
         int res = ToolRunner.run(new Configuration(), new NotificationsUsageDriver(), args);
+        System.out.print("Driver finished");
         System.exit(res);
     }
 }

@@ -24,6 +24,8 @@ public class NotificationsUsageMapper extends Mapper<
             Text value,       // Input value type
             Context context) throws IOException, InterruptedException {
 
+        System.out.print("Mapping...");
+
         // Convert the input value to string
         String line = value.toString();
 
