@@ -7,24 +7,12 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-/* Mapper Class */
-public class DailyAppLaunchMapper extends Mapper<
-        LongWritable, // Input key type
-        Text,         // Input value type
-        Text,         // Output key type
-        Text>         // Output value type
-{
-    /* Private variables */
+public class DailyAppLaunchMapper extends Mapper<LongWritable, Text, Text, Text> {
+
     private final Text dateKey = new Text();
     private final Text appAndCountValue = new Text();
 
-    /* Implementation of the map method */
-    protected void map(
-            LongWritable key, // Input key type
-            Text value,       // Input value type
-            Context context) throws IOException, InterruptedException {
-
-        // Convert the input value to string
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         String line = value.toString();
 
         // Skip header
@@ -32,7 +20,7 @@ public class DailyAppLaunchMapper extends Mapper<
             return;
         }
 
-        // Expected Columns: Date(0), App(1), Usage(2), Notifications(3), Times Opened(4)
+        // Columns: Date(0), App(1), Usage(2), Notifications(3), Times Opened(4)
         String[] parts = line.split(",");
 
         if (parts.length >= 5) {
@@ -41,15 +29,12 @@ public class DailyAppLaunchMapper extends Mapper<
                 String app = parts[1].trim();
                 String timesOpened = parts[4].trim();
 
-                // 1. Set the Output Key: Just the Date
-                // We group ONLY by date now, so the reducer sees all apps for that day together
+                // Key: Date (so we process one full day at a time)
                 dateKey.set(date);
 
-                // 2. Set the Output Value: App Name + Tab + Count
-                // We need to pass the App name to the reducer so we know who the winner is
+                // Value: AppName + Tab + Count (Data needed for aggregation)
                 appAndCountValue.set(app + "\t" + timesOpened);
 
-                // Emit: Key(2023-01-01) -> Value(Facebook    150)
                 context.write(dateKey, appAndCountValue);
 
             } catch (Exception e) {
