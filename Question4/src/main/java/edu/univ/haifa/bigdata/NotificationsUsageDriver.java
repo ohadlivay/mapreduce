@@ -24,6 +24,7 @@ public class NotificationsUsageDriver extends Configured implements Tool {
         int exitCode;
         Path inputPath;
         Path outputPath;
+        int numberOfReducers = 1;
 
         // Check arguments consistency
         if (args.length != 2) {
@@ -82,6 +83,9 @@ public class NotificationsUsageDriver extends Configured implements Tool {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
+        // Set number of reducers
+        job.setNumReduceTasks(numberOfReducers);
+
         // Execute the job and wait for completion
         if (job.waitForCompletion(true) == true)
             exitCode = 0;
@@ -93,10 +97,8 @@ public class NotificationsUsageDriver extends Configured implements Tool {
 
     /* main method of the driver class */
     public static void main(String args[]) throws Exception {
-        System.out.print("Driver starting");
         /* Exploit the ToolRunner class to "configure" and run the Hadoop application */
         int res = ToolRunner.run(new Configuration(), new NotificationsUsageDriver(), args);
-        System.out.print("Driver finished");
         System.exit(res);
     }
 }
