@@ -15,8 +15,8 @@ public class DailyAppLaunchMapper extends Mapper<
         Text>         // Output value type
 {
     /* Private variables */
-    private final Text dateKey = new Text();
-    private final Text appAndCount = new Text();
+    private final Text compositeKey = new Text();
+    private final Text usageCount = new Text();
 
     /* Implementation of the map method */
     protected void map(
@@ -43,14 +43,15 @@ public class DailyAppLaunchMapper extends Mapper<
                 String app = parts[1].trim();
                 String timesOpened = parts[4].trim();
 
-                // Set the output key: Date (e.g., "2024-08-07")
-                dateKey.set(date);
+                // Set the output key: Date + Tab + App
+                // We combine them so Hadoop groups by this specific combination
+                compositeKey.set(date + "\t" + app);
 
-                // Set the output value: "App<tab>Count"
-                appAndCount.set(app + "\t" + timesOpened);
+                // Set the output value: Just the count
+                usageCount.set(timesOpened);
 
-                // Emit the pair (date, app+count)
-                context.write(dateKey, appAndCount);
+                // Emit the pair (date+app, count)
+                context.write(compositeKey, usageCount);
 
             } catch (Exception e) {
                 // Ignore malformed lines
